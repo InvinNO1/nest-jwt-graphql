@@ -6,7 +6,3 @@ type User {
 type Query {
     me: User
 }
-
-type Mutation {
-    login(email: String): String
-}

@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { UserService } from './user.service'
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt'
 import { jwtConstants } from '../constants'
-import { AuthModule } from '../auth/auth.module';
-import { UserResolver } from './user.resolver';
+import { AuthModule } from '../auth/auth.module'
+import { UserResolver } from './user.resolver'
 
 @Module({
   imports: [
@@ -11,7 +11,7 @@ import { UserResolver } from './user.resolver';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '60s' },
     }),
-    AuthModule,
+    forwardRef(() => AuthModule),
   ],
   providers: [UserService, UserResolver],
   exports: [UserService, JwtModule],
