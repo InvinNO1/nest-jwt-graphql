@@ -2,7 +2,7 @@ version: '3.5'
 
 services:
   postgres:
-    container_name: alpha_tech_db
+    container_name: nest-jwt
     image: postgres
     environment:
       POSTGRES_USER: root

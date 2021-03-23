@@ -45,6 +45,14 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Migrate DB
+```
+yarn migrate <version>
+```
+
+- If `version = 0` rollback all migrates
+
+
 ## Test
 
 ```bash
