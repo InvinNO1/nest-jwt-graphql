@@ -1,7 +1,7 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { compareSync } from 'bcrypt'
 import { UserService } from '../user/user.service'
-// import { JwtService } from '@nestjs/jwt'
+import { AuthenticationError } from 'apollo-server-core'
 import { LoginInput } from './dto/login.input'
 import { LoginOutput } from './dto/login.output'
 import { JwtService } from '@nestjs/jwt'
@@ -12,10 +12,11 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
   ) {}
+
   async login(input: LoginInput): Promise<LoginOutput> {
     const user = await this.userService.findByUsername(input.username)
     if (!user || compareSync(input.password, user.password)) {
-      throw new UnauthorizedException()
+      throw new AuthenticationError('Username or password incorrect')
     }
 
     const payload = {

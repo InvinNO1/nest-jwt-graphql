@@ -23,6 +23,24 @@ export class UserService {
     return user
   }
 
+  async findAll() {
+    const users = await this.userRepo.find({ enabled: true })
+    users.forEach((user) => (user.password = null))
+    return users
+  }
+
+  findOne(id: number) {
+    return this.userRepo.findOne({ id, enabled: true })
+  }
+
+  findByUsername(username: string) {
+    return this.userRepo.findOne({ username })
+  }
+
+  update(id: number, updateUserInput: UpdateUserInput) {
+    return `This action updates a #${id} user`
+  }
+
   private async genUsername(fullName: string) {
     const names = fullName.split(' ')
     let username = names.pop()
@@ -41,27 +59,5 @@ export class UserService {
       result += characters.charAt(Math.floor(Math.random() * charactersLength))
     }
     return result
-  }
-
-  async findAll() {
-    const users = await this.userRepo.find()
-    users.forEach((user) => (user.password = null))
-    return users
-  }
-
-  findOne(id: number) {
-    return this.userRepo.findOne(id)
-  }
-
-  findByUsername(username: string) {
-    return this.userRepo.findOne({ username })
-  }
-
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`
   }
 }

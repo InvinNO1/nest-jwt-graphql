@@ -5,6 +5,7 @@ import { UserModule } from '../user/user.module'
 import { AuthService } from './auth.service'
 import { JwtModule } from '@nestjs/jwt'
 import { JWT_EXPIRES_IN, JWT_SECRET } from '../constants'
+import { JwtStrategy } from './jwt.strategy'
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { JWT_EXPIRES_IN, JWT_SECRET } from '../constants'
       },
     }),
   ],
-  providers: [AuthResolver, AuthService],
+  providers: [AuthResolver, AuthService, JwtStrategy],
   exports: [],
 })
 export class AuthModule {}
