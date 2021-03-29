@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import { PassportStrategy } from '@nestjs/passport'
 import { AuthenticationError } from 'apollo-server-core'
-import { AuthService } from './auth.service'
-import { JWT_SECRET } from '../constants'
+import { JWT_SECRET } from '../common/constants'
 import { UserService } from '../user/user.service'
 
 @Injectable()

@@ -15,7 +15,8 @@ export class AuthService {
 
   async login(input: LoginInput): Promise<LoginOutput> {
     const user = await this.userService.findByUsername(input.username)
-    if (!user || compareSync(input.password, user.password)) {
+    const comparePassword = compareSync(input.password, user.password)
+    if (!user || !comparePassword) {
       throw new AuthenticationError('Username or password incorrect')
     }
 

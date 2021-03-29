@@ -4,7 +4,7 @@ import { AuthResolver } from './auth.resolver'
 import { UserModule } from '../user/user.module'
 import { AuthService } from './auth.service'
 import { JwtModule } from '@nestjs/jwt'
-import { JWT_EXPIRES_IN, JWT_SECRET } from '../constants'
+import { JWT_EXPIRES_IN, JWT_SECRET } from '../common/constants'
 import { JwtStrategy } from './jwt.strategy'
 
 @Module({

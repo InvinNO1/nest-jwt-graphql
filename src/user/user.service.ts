@@ -5,6 +5,7 @@ import { Like, Repository } from 'typeorm'
 import { User } from './entities/user.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { hashSync } from 'bcrypt'
+import { remove } from 'remove-accents'
 
 const characters =
   'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -34,7 +35,7 @@ export class UserService {
   }
 
   findByUsername(username: string) {
-    return this.userRepo.findOne({ username })
+    return this.userRepo.findOne({ username, enabled: true })
   }
 
   update(id: number, updateUserInput: UpdateUserInput) {
@@ -47,7 +48,7 @@ export class UserService {
     while (names.length > 0) {
       username += names.shift()[0]
     }
-    username = username.toLowerCase()
+    username = remove(username.toLowerCase())
     const count =
       (await this.userRepo.count({ username: Like(`${username}%`) })) || 0
     return `${username}${count + 1}`

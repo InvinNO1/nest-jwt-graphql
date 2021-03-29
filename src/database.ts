@@ -8,7 +8,7 @@ import {
   DB_PORT,
   DB_SCHEMA,
   DB_USERNAME,
-} from './constants'
+} from './common/constants'
 
 export default [
   TypeOrmModule.forRootAsync({
