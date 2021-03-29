@@ -1,19 +1,12 @@
-import { forwardRef, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { UserService } from './user.service'
-import { JwtModule } from '@nestjs/jwt'
-import { jwtConstants } from '../constants'
-import { AuthModule } from '../auth/auth.module'
 import { UserResolver } from './user.resolver'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { User } from './entities/user.entity'
 
 @Module({
-  imports: [
-    JwtModule.register({
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
-    }),
-    forwardRef(() => AuthModule),
-  ],
-  providers: [UserService, UserResolver],
-  exports: [UserService, JwtModule],
+  imports: [TypeOrmModule.forFeature([User])],
+  providers: [UserResolver, UserService],
+  exports: [UserService, TypeOrmModule],
 })
 export class UserModule {}

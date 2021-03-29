@@ -1,41 +1,67 @@
 import { Injectable } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
+import { CreateUserInput } from './dto/create-user.input'
+import { UpdateUserInput } from './dto/update-user.input'
+import { Like, Repository } from 'typeorm'
+import { User } from './entities/user.entity'
+import { InjectRepository } from '@nestjs/typeorm'
+import { hashSync } from 'bcrypt'
 
-export type User = {
-  userId: number
-  username: string
-  password: string
-  email: string
-}
+const characters =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+const charactersLength = characters.length
 
 @Injectable()
 export class UserService {
-  constructor(private jwtService: JwtService) {}
+  constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
 
-  private readonly users = [
-    {
-      userId: 1,
-      username: 'john',
-      password: 'changeme',
-      email: 'a@a.aa',
-    } as User,
-    {
-      userId: 2,
-      username: 'maria',
-      password: 'guess',
-      email: 'na@a.aa',
-    } as User,
-  ]
-
-  async findOne(username: string): Promise<User | undefined> {
-    return this.users.find((user) => user.username === username)
+  async create(input: CreateUserInput) {
+    input.username = await this.genUsername(input.fullName)
+    const password = UserService.genPassword(16)
+    input.password = hashSync(password, 10)
+    const user = await this.userRepo.save(input)
+    user.password = password
+    return user
   }
 
-  async getUserByEmail(email: string) {
-    return this.users.find((user) => user.email === email)
+  private async genUsername(fullName: string) {
+    const names = fullName.split(' ')
+    let username = names.pop()
+    while (names.length > 0) {
+      username += names.shift()[0]
+    }
+    username = username.toLowerCase()
+    const count =
+      (await this.userRepo.count({ username: Like(`${username}%`) })) || 0
+    return `${username}${count + 1}`
   }
 
-  createToken(user: User) {
-    return this.jwtService.sign({ id: user.userId, email: user.email })
+  private static genPassword(length) {
+    let result = ''
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength))
+    }
+    return result
+  }
+
+  async findAll() {
+    const users = await this.userRepo.find()
+    users.forEach((user) => (user.password = null))
+    return users
+  }
+
+  findOne(id: number) {
+    return this.userRepo.findOne(id)
+  }
+
+  findByUsername(username: string) {
+    return this.userRepo.findOne({ username })
+  }
+
+  update(id: number, updateUserInput: UpdateUserInput) {
+    return `This action updates a #${id} user`
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} user`
   }
 }

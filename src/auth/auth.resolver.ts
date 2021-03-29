@@ -1,17 +1,14 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
-import { UnauthorizedException } from '@nestjs/common'
-import { UserService } from '../user/user.service'
+import { LoginInput } from './dto/login.input'
+import { LoginOutput } from './dto/login.output'
+import { AuthService } from './auth.service'
 
 @Resolver('Auth')
 export class AuthResolver {
-  constructor(private userService: UserService) {}
+  constructor(private authService: AuthService) {}
 
-  @Mutation()
-  async login(@Args('email') email: string) {
-    const user = await this.userService.getUserByEmail(email)
-    if (!user) {
-      throw new UnauthorizedException()
-    }
-    return this.userService.createToken(user)
+  @Mutation(() => LoginOutput)
+  login(@Args('input') input: LoginInput): Promise<LoginOutput> {
+    return this.authService.login(input)
   }
 }
