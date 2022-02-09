@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
-import { CommonEntity } from '../../common/common.entity'
+import { CommonEntity } from '../common/common.entity'
 
 @ObjectType()
 @Entity()
@@ -13,7 +13,6 @@ export class User extends CommonEntity {
   @Column()
   username: string
 
-  @Field({ nullable: true })
   @Column()
   password: string
 
@@ -24,4 +23,8 @@ export class User extends CommonEntity {
   @Field()
   @Column()
   phone: string
+
+  @Field()
+  @Column({ default: true })
+  enabled: boolean
 }

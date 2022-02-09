@@ -1,17 +1,19 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { Column, UpdateDateColumn, VersionColumn } from 'typeorm'
+import { AuthUser } from '../util/model'
 
 @ObjectType()
-export class CommonEntity {
+export class CommonEntity extends AuthUser {
   @Field()
   @Column({ default: true })
-  enabled: boolean
+  deleted: boolean
 
   @Field(() => Date)
   @UpdateDateColumn()
   createdAt: Date
 
   @Field()
+  @Column()
   createdBy: string
 
   @Field(() => Date)
@@ -19,6 +21,7 @@ export class CommonEntity {
   updatedAt: Date
 
   @Field()
+  @Column()
   updatedBy: string
 
   @Field()

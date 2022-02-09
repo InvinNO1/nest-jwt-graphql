@@ -6,8 +6,9 @@ import { Connection } from 'typeorm/connection/Connection'
 import { ConnectionOptions } from 'typeorm/connection/ConnectionOptions'
 
 function loadEnv() {
-  if (!process.env.NODE_ENV) {
-    config({ path: __dirname + '/../dev.env' })
+  if (['dev', 'aws'].includes(process.env.APP_ENV)) {
+    console.log(`START ON ${process.env.APP_ENV} MODE`)
+    config({ path: __dirname + `/../${process.env.APP_ENV}.env` })
   }
 }
 

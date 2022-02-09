@@ -9,6 +9,7 @@ import {
   DB_SCHEMA,
   DB_USERNAME,
 } from './constants'
+import { getMetadataArgsStorage } from 'typeorm'
 
 export default [
   TypeOrmModule.forRootAsync({
@@ -22,11 +23,13 @@ export default [
         password: DB_PASSWORD,
         database: DB_DATABASE,
         schema: DB_SCHEMA,
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        // entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        entities: getMetadataArgsStorage().tables.map((tbl) => tbl.target),
         synchronize: false,
         logging: DB_LOGGING,
         autoLoadEntities: false,
         namingStrategy: new SnakeNamingStrategy(),
+        keepConnectionAlive: true,
       }
     },
   }),

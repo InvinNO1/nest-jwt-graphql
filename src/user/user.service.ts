@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { CreateUserInput } from './dto/create-user.input'
-import { UpdateUserInput } from './dto/update-user.input'
-import { Like, Repository } from 'typeorm'
-import { User } from './entities/user.entity'
-import { InjectRepository } from '@nestjs/typeorm'
+import { Like } from 'typeorm'
 import { hashSync } from 'bcrypt'
+import { UserRepository } from './user.repository'
+import { ObjectNotFound } from '../util/exception'
+import { CreateUserInput, UpdateUserInput } from './user.dto'
+import { User } from './user.entity'
 
 const characters =
   'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -12,7 +12,7 @@ const charactersLength = characters.length
 
 @Injectable()
 export class UserService {
-  constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
+  constructor(private userRepo: UserRepository) {}
 
   async create(input: CreateUserInput) {
     input.username = await this.genUsername(input.fullName)
@@ -33,12 +33,19 @@ export class UserService {
     return this.userRepo.findOne({ id, enabled: true })
   }
 
-  findByUsername(username: string) {
-    return this.userRepo.findOne({ username })
+  findByUsername(username: string, enabled = true, deleted = false) {
+    return this.userRepo.findOne({ username, enabled, deleted })
   }
 
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`
+  async update(updateUserInput: UpdateUserInput) {
+    const user = await this.userRepo.findOne({
+      id: updateUserInput.id,
+      enabled: true,
+      deleted: false,
+    })
+    if (!user) throw new ObjectNotFound()
+    Object.assign(user, updateUserInput)
+    return await this.userRepo.save(user)
   }
 
   private async genUsername(fullName: string) {
